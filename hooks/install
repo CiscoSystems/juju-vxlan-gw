@@ -1,0 +1,34 @@
+#!/bin/bash
+# Here do anything needed to install the service
+# Make sure this hook exits cleanly and is idempotent, common problems here are
+# failing to account for a debconf question on a dependency, or trying to pull
+# from github without installing git first.
+
+
+function add_repo {
+  echo 'deb https://ddhanapa:wjbQNzJlGt0WCbWCLzLb@private-ppa.launchpad.net/springfield-team/n1k-staging/ubuntu precise main' >> /etc/apt/sources.list.d/springfield-ppa.list
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F5DB2BA06DB3EEB4
+}
+
+function download_vxgw {
+  apt-get update
+
+#remove previous packages if exists
+  rm -f /opt/cisco/n1kv/vxgw/*
+#logger "Download vxlan-gateway package"
+  apt-get install -y vxgw-qcow2
+  FILENAME=/opt/cisco/n1kv/vxgw/vxgw.5.2.1.SK1.2.1.disk1.qcow2 
+  FILESIZE=$(stat -c%s "$FILENAME")
+
+  while [ ! -f $FILENAME ]; do
+      sleep 1
+  done
+
+  if [ -f $FILENAME ]; then
+      if [ $FILESIZE < 118000000 ]; then 
+          sleep 1
+      fi
+  fi
+}
+
+download_vxgw
