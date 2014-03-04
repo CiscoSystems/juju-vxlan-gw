@@ -4,19 +4,63 @@
 # Best practice suggests you execute the hooks/install and
 # hooks/config-changed to ensure all updates are processed
 
-source ./common.sh
-
 function download_vxgw {
-logger "search for vxgw updates..."
-apt-get update
-logger "Download vxlan-gateway updated package"
-apt-get install -y vxlan-gateway
+  #remove already installed vxgw
+  vxgw_installed=`apt-cache policy vxgw | grep Installed | grep -w none`
+  if [ "$vxgw_installed" = "" ]; then
+    apt-get remove -y vxgw
+  fi
+  rm -f /opt/cisco/n1kv/vxgw/*
+  apt-get update
+  version=$(config-get n1kv-version)
+
+  if [ "$version" != "latest" ];then
+    apt-get install -y vxgw="$version"*
+  else
+    apt-get install -y vxgw
+  fi
+
+  FILENAME=/opt/cisco/n1kv/vxgw/*
+  while [ ! -f $FILENAME ]; do
+    sleep 2
+  done
+
+  FILESIZE=$(stat -c%s "$FILENAME")
+  FILESIZE_LIMIT=118000000
+  if [ -f $FILENAME ]; then
+    if [ "$FILESIZE" -lt "$FILESIZE_LIMIT" ]; then
+        sleep 5
+    fi
+  fi
 }
 
 function load_vxgw_to_glance {
-glance image-delete vx-gw
-logger "loading vx-gw up-to-date image to glance"
-glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
+  FILENAME=/opt/cisco/n1kv/vxgw/*
+  if [ -f $FILENAME ]; then
+    FILESIZE=$(stat -c%s "$FILENAME")
+    FILESIZE_LIMIT=118000000
+    if [ "$FILESIZE" -lt "$FILESIZE_LIMIT" ]; then
+        sleep 5
+    fi
+
+    openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
+    TIMEOUT=10
+    while [ "$openrc_ready" = ":" ]; do
+      sleep 5
+      TIMEOUT=$((TIMEOUT - 1))
+      echo $TIMEOUT
+      openrc_ready=`cat /root/openrc | grep AUTH_URL | grep -oP '://\K.*?(?=/v2.0|$)'`
+      if [ "$TIMEOUT" -eq "0" ]; then
+        exit 1
+      fi
+    done
+    source /root/openrc
+
+    glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
+  else
+    exit 1
+  fi
+#glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
 }
 
 download_vxgw

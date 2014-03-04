@@ -1,5 +1,16 @@
 options:
-  vxgw-img-name:
+  n1kv-source:
     type: string
-    default: "vx-gw.qcow2"
-    description: "vxlan gw image name"
+    default: distro
+    description: |
+      Optional configuration to support use of additional sources such as:
+      .
+        - ppa:myteam/ppa
+        - deb http://my.archive.com/ubuntu main|KEYID
+      .
+      Note that this is used only for Cisco n1kv plugin.
+  n1kv-version:
+    type: string
+    default: latest
+    description: |
+      Provides the vxlan gw image version. Default is the latest in the provided source.
