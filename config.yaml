@@ -5,8 +5,8 @@ options:
     description: |
       Optional configuration to support use of additional sources such as:
       .
-        - ppa:myteam/ppa
-        - deb http://my.archive.com/ubuntu main|KEYID
+        - If a private PPA deb http://my.archive.com/ubuntu main|KEYID
+        - If a public PPA deb http://my.archive.com/ubuntu main
       .
       Note that this is used only for Cisco n1kv plugin.
   n1kv-version:
