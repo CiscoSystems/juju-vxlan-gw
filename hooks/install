@@ -4,33 +4,34 @@
 # failing to account for a debconf question on a dependency, or trying to pull
 # from github without installing git first.
 
-
 function add_repo {
   # remove old repos
   rm -f /etc/apt/sources.list.d/springfield-ppa.list
 
   # get the source from input config.
   source=$(config-get n1kv-source)
-  if [ "$source" == "distro" ]; then
+  if [ "$source" = "distro" ]; then
     exit 1
   fi
 
-  arr_source=($source)  
-  if [ ${arr_source[0]} == 'deb' ];then
-    key=`cut -d "|" -f 2 <<< "$source"`
+  arr_source=($source)
+  if [ ${arr_source[0]} = "deb" ];then
+    IspublicPPA=`awk -F'|' '{ print NF }' <<<"$sources"`
+    if [ "$IspublicPPA" -ne 0 ];then
+      # if a private PPA
+      key=`cut -d "|" -f 2 <<< "$source"`
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $key
+    fi
     deb_sources=`cut -d "|" -f 1 <<< "$source"`
     No_repos=`awk -F',' '{ print NF }' <<<"$deb_sources"`
     i=1
     while [ "$No_repos" -ne "0" ]; do
-      deb_source=`cut -d "," -f $i <<< "$deb_sources"` 
+      deb_source=`cut -d "," -f $i <<< "$deb_sources"`
       echo $deb_source >> /etc/apt/sources.list.d/springfield-ppa.list
       i=$((i + 1))
       No_repos=$((No_repos - 1))
-    done    
-
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $key
+    done
   fi
-
 }
 
 function download_vxgw {
