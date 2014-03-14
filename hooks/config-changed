@@ -27,7 +27,6 @@ function load_vxgw_to_glance {
   else
     exit 1
   fi
-#glance image-create --name vx-gw --disk-format qcow2 --container-format bare --is-public True < /tmp/$(config-get vxgw-img-name)
 }
 
 load_vxgw_to_glance
