@@ -36,6 +36,7 @@ function download_vxgw {
 
 function load_vxgw_to_glance {
   FILENAME=`ls /opt/cisco/n1kv/vxgw/*`
+  IMG_NAME=$(basename $FILENAME)$(date +%H:%M:%S)
   if [ -f $FILENAME ]; then
     FILESIZE=$(stat -c%s "$FILENAME")
     FILESIZE_LIMIT=118000000
@@ -56,7 +57,7 @@ function load_vxgw_to_glance {
     done
     source /root/openrc
 
-    glance image-create --name=vx-gw --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
+    glance image-create --name=$IMG_NAME --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
   else
     exit 1
   fi
