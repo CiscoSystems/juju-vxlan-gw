@@ -1,5 +1,8 @@
 name: vxlan-gateway
-summary: The charm automates the uploading of Nexus1K vxlan-gateway image to glance
+summary: The charm automates uploading of Nexus1K vxlan-gateway image to glance
+maintainer: Dulanjalie Ganegedara <ddhanapa@cisco.com>
+categories:
+   - misc
 subordinate: true
 description: |
   This charm passes the vxlan image to nova-cloud-controller and upload it to the glance
