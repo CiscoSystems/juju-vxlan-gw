@@ -21,8 +21,10 @@ nova-cloud-controller.
 In the config.yaml you can provide general config that will
 be common to all VXLAN Gateway in environement.
 
-juju deploy [--config=<config file>]  nova-cloud-controller
-juju deploy [--config=<config-file>]  vxlan-gateway
+juju deploy [--config=config-file]  nova-cloud-controller
+
+juju deploy [--config=config-file]  vxlan-gateway
+
 juju add-relation nova-cloud-controller vxlan-gateway
 
 Contact Information
@@ -30,6 +32,7 @@ Contact Information
 Author: Dulanjalie Ganegedara ddhanapa@cisco.com
 
 Report bugs at: http://bugs.launchpad.net/charms/+source/vxlan-gateway
-Location: http://jujucharms.com/charms/distro/vem
+
+Location: http://jujucharms.com/charms/distro/vxlan-gateway
 
 
