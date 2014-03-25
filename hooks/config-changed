@@ -24,7 +24,11 @@ function load_vxgw_to_glance {
     done
 
     source /root/openrc
-    glance image-create --name=$IMG_NAME --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
+
+    img_exist=`glance image-list | grep -w $IMG_NAME`
+    if [ "$img_exist" = "" ]; then
+        glance image-create --name=$IMG_NAME --is-public=true --property hw_vif_model=virtio --property hw_disk_bus=ide --property hw_cdrom_bus=ide --container-format=ovf --disk-format=qcow2 < $FILENAME
+    fi
   else
     exit 1
   fi
