@@ -69,5 +69,6 @@ function download_vxgw {
   fi
 }
 
+set -e 
 add_repo
 download_vxgw

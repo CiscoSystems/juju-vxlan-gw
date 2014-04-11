@@ -34,4 +34,5 @@ function load_vxgw_to_glance {
   fi
 }
 
+set -e
 load_vxgw_to_glance

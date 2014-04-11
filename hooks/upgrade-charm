@@ -34,5 +34,6 @@ function download_vxgw {
   fi
 }
 
+set -e 
 download_vxgw
 
