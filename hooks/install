@@ -36,7 +36,7 @@ function add_repo {
 
 function download_vxgw {
   #Cleanup the old vxgw images if exists
-  vxgw_installed=`apt-cache policy vxgw | grep Installed | grep -w none`
+  vxgw_installed=`apt-cache policy vxgw | grep Installed | grep -w none; true`
   if [ "$vxgw_installed" = "" ]; then
     apt-get remove -y vxgw
   fi

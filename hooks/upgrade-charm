@@ -6,7 +6,7 @@
 
 function download_vxgw {
   #remove already installed vxgw
-  vxgw_installed=`apt-cache policy vxgw | grep Installed | grep -w none`
+  vxgw_installed=`apt-cache policy vxgw | grep Installed | grep -w none; true`
   if [ "$vxgw_installed" = "" ]; then
     apt-get remove -y vxgw
   fi
